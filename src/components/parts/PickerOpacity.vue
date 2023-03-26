@@ -1,7 +1,7 @@
 <template>
   <div
     class="opacity-background"
-    :style="{ width: width + 'px' }"
+    :style="{ width: width + 'px', height: height + 'px' }"
     @mousedown="mouseDown"
     @mouseup="mouseUp"
   >
@@ -13,7 +13,7 @@
     >
       <div
         class="opacity-pointer"
-        :style="pointPositionStyle"
+        :style="pointStyle"
       />
     </div>
   </div>
@@ -35,6 +35,14 @@ export default {
       type: [String, Number],
       default: 15,
     },
+    pointSize: {
+      type: [String, Number],
+      default: 11
+    },
+    pointColor: {
+      type: String,
+      default: 'white'
+    }
   },
   data() {
     return {
@@ -52,9 +60,12 @@ export default {
     });
   },
   computed: {
-    pointPositionStyle() {
+    pointStyle() {
       return {
         left: this.pointerPosition.left + 'px',
+        width: this.pointSize + 'px',
+        height: this.pointSize + 'px',
+        border: `2px solid ${this.pointColor}`
       };
     },
     computedStyle() {
@@ -65,7 +76,7 @@ export default {
       };
     },
     value() {
-      return this.pointerPosition.left / (this.width - 20);
+      return this.pointerPosition.left / (this.width - 15);
     },
   },
   methods: {
@@ -109,18 +120,13 @@ export default {
   border-radius: 12px;
 }
 .opacity-background {
-  width: 100%;
-  height: 100%;
   border-radius: 12px;
   position: relative;
   background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iOHB4IiBoZWlnaHQ9IjhweCIgdmlld0JveD0iMCAwIDggOCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDxnIGlkPSLil7zvuI4tLy1taXNjLS8tdGV4dHVyZXMtLy1jaGVzcy0oMjR4MzIpLWNvcHkiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIG9wYWNpdHk9IjAuMiI+CiAgICAgICAgPGcgaWQ9Ikdyb3VwLUNvcHkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQuMDAwMDAwLCA0LjAwMDAwMCkgcm90YXRlKC0yNzAuMDAwMDAwKSB0cmFuc2xhdGUoLTQuMDAwMDAwLCAtNC4wMDAwMDApIHRyYW5zbGF0ZSgtMC4wMDAwMDAsIDAuMDAwMDAwKSIgZmlsbD0iIzAwMDAwMCI+CiAgICAgICAgICAgIDxyZWN0IGlkPSJSZWN0YW5nbGUtOCIgeD0iMCIgeT0iNCIgd2lkdGg9IjQiIGhlaWdodD0iNCI+PC9yZWN0PgogICAgICAgICAgICA8cmVjdCBpZD0iUmVjdGFuZ2xlLTgtQ29weS0yIiB4PSI0IiB5PSIwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0Ij48L3JlY3Q+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4K);
 }
 .opacity-pointer {
   position: absolute;
-  width: 7px;
-  height: 7px;
   border-radius: 50%;
-  border: 2px solid white;
   z-index: 2;
   top: 2px;
 }

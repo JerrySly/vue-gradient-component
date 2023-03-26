@@ -8,7 +8,7 @@
     <canvas ref="canvas" :width="width" class="color-canvas" /> 
     <div
       class="color-pointer"
-      :style="pointPositionStyle"
+      :style="pointStyle"
     />
   </div>
 </template>
@@ -24,6 +24,14 @@ export default {
       type: [String, Number],
       default: 15,
     },
+    pointSize: {
+      type: [String, Number],
+      default: 11
+    },
+    pointColor: {
+      type: String,
+      default: 'white'
+    }
   },
   data() {
     return {
@@ -42,9 +50,12 @@ export default {
     this.setCanvas();
   },
   computed: {
-    pointPositionStyle() {
+    pointStyle() {
       return {
         left: this.pointerPosition.left + 'px',
+        width: this.pointSize + 'px',
+        height: this.pointSize + 'px',
+        border: `2px solid ${this.pointColor}`
       };
     },
     computedStyle() {
@@ -101,12 +112,11 @@ export default {
     },
     setPointerOnMouse(x) {
       const { left, width } = this.$refs.canvas.getBoundingClientRect();
-      console.log(left, width);
       if (x > left + width) {
-        x = left + width - 10;
+        x = left + width - 5;
       }
       if (x < left) {
-        x = left;
+        x = left + 5;
       }
       const currentLeft = x - left - 5;
       this.pointerPosition = {
@@ -124,10 +134,7 @@ export default {
 }
 .color-pointer {
   position: absolute;
-  width: 7px;
-  height: 7px;
   border-radius: 50%;
-  border: 2px solid white;
   z-index: 2;
   top: 2px;
 }

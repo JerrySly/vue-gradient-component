@@ -3,14 +3,15 @@
     id="picker-body"
     @mousedown="mouseDown"
     @mouseup="mouseUp"
+    :style="calculatedStyle"
   >
     <div
       class="picker-body__pointer"
-      :style="pointPositionStyle"
+      :style="pointStyle"
     ></div>
     <canvas
-      width="350"
-      height="300"
+      :width="width"
+      :height="height"
       ref="canvas"
     >
       <!-- <div
@@ -37,6 +38,22 @@ export default {
         left: 20,
       },
     },
+    width: {
+      type: [String,Number],
+      default: 300
+    },
+    height: {
+      type: [String, Number],
+      default: 300
+    },
+    pointSize: {
+      type: [String,Number],
+      default: 10
+    },
+    pointColor: {
+      type: String,
+      default: 'orange'
+    }
   },
   data() {
     return {
@@ -47,10 +64,19 @@ export default {
     };
   },
   computed: {
-    pointPositionStyle() {
+    calculatedStyle() {
+      return {
+        width: this.width + 'px',
+        height: this.height + 'px'
+      }
+    },
+    pointStyle() {
       return {
         top: this.pointerPosition.top + 'px',
         left: this.pointerPosition.left + 'px',
+        width: this.pointSize + 'px',
+        height: this.pointSize + 'px',
+        border: `2px solid ${this.pointColor}`
       };
     },
   },
@@ -149,7 +175,7 @@ export default {
       return ((r << 16) | (g << 8) | b).toString(16);
     },
     setPointerOnMouse(x, y) {
-      const { left, top, width, height } = this.body.getBoundingClientRect();
+      const { left, top, width, height } = this.$refs.canvas.getBoundingClientRect();
       if (x > left + width - 10) {
         x = left + width - 15;
       }
@@ -175,19 +201,12 @@ export default {
 
 <style>
 #picker-body {
-  max-width: 500px;
-  max-height: 500px;
-  width: 350px;
-  height: 300px;
   position: relative;
   user-select: none;
 }
 .picker-body__pointer {
   position: absolute;
-  width: 10px;
-  height: 10px;
   border-radius: 50%;
-  border: 2px solid orange;
   /* box-shadow: 1px 1px 1px black; */
   z-index: 2;
 }
