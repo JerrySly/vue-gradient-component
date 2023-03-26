@@ -57,6 +57,9 @@ export default {
   watch: {
     color() {
       this.setCanvas();
+      const picker = document.getElementsByClassName('picker-body__pointer')[0];
+      const {left, top} = picker.getBoundingClientRect();
+      this.setSelectedColor(left, top);
     },
   },
   mounted() {
