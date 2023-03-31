@@ -1,7 +1,7 @@
 <template
-  ><div class="picker">
+  ><div class="color-picker">
     <picker-body
-      class="picker__body"
+      class="color-picker__body"
       :color="shade.rgb"
       @input="colorInput"
       :width="width"
@@ -9,16 +9,22 @@
       :point-size="pickerBodyPointSize"
       :point-color="pickerBodyPointColor"
     />
+    <picker-gradient
+      :width="width"
+      :height="optionBlockHeight"
+      :point-size="pickerGradientPointSize"
+      class="color-picker__gradient"
+    />
     <picker-color-panel
       @input="(data) => (shade = data)"
-      class="picker__color-panel"
+      class="color-picker__color-panel"
       :width="width"
       :height="optionBlockHeight"
       :point-size="pickerOptionPointSize"
       :point-color="pickerOptionPointColor"
     />
     <picker-opacity
-      class="picker__opacity"
+      class="color-picker__opacity"
       @input="(data) => (opacity = data)"
       :width="width"
       :height="optionBlockHeight"
@@ -43,6 +49,7 @@
 <script>
 import PickerBody from './parts/PickerBody.vue';
 import PickerColorPanel from './parts/PickerColorPanel.vue';
+import PickerGradient from './parts/PickerGradient.vue';
 import PickerOpacity from './parts/PickerOpacity.vue';
 import PickerOutput from './parts/PickerOutput.vue';
 import PickerPreview from './parts/PickerPreview.vue';
@@ -53,6 +60,7 @@ export default {
     PickerPreview,
     PickerColorPanel,
     PickerOutput,
+    PickerGradient,
   },
   props: {
     width: {
@@ -78,6 +86,10 @@ export default {
     pickerOptionPointSize: {
       type: [String, Number],
       default: 7,
+    },
+    pickerGradientPointSize: {
+      type: [String, Number],
+      default: 12,
     },
     pickerOptionPointColor: {
       type: String,
@@ -105,6 +117,13 @@ export default {
       validator(value) {
         // The value must match one of these strings
         return ['string/rgba', 'object', 'string/svg'].includes(value);
+      },
+    },
+    mode: {
+      type: String,
+      default: 'normal',
+      validator(value) {
+        return ['normal', 'gradient'].includes(value);
       },
     },
   },
@@ -141,14 +160,14 @@ export default {
     },
     ///to-do with gradient + svg
     emitValue() {
-      if (this.outputValueType === 'string/rgba') 
+      if (this.outputValueType === 'string/rgba')
         this.$emit('input', this.previewBackground);
       if (this.outputValueType === 'object') {
         this.color.a = this.opacity;
         this.$emit('input', this.color);
       }
       return this.previewBackground;
-    }
+    },
   },
 };
 </script>
@@ -166,9 +185,10 @@ export default {
 .picker {
   margin-left: 120px;
 }
-.picker__body,
-.picker__color-panel {
-  margin-bottom: 20px;
+.color-picker__body,
+.color-picker__color-panel,
+.color-picker__gradient {
+  margin-bottom: 15px;
 }
 .preview-block {
   margin-top: 10px;

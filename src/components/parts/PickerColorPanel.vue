@@ -5,7 +5,7 @@
     @mousedown="mouseDown"
     @mouseup="mouseUp"
   >
-    <canvas ref="canvas" :width="width" class="color-canvas" /> 
+    <canvas ref="canvasColor" :width="width" class="color-canvas" /> 
     <div
       class="color-pointer"
       :style="pointStyle"
@@ -65,7 +65,7 @@ export default {
       };
     },
     value() {
-      const ctx = this.$refs.canvas.getContext('2d');
+      const ctx = this.$refs.canvasColor.getContext('2d');
       const point = ctx.getImageData(this.pointerPosition.left, 1, 1, 1).data;
       console.log(point, this.pointerPosition.left);
       return {
@@ -78,9 +78,9 @@ export default {
   },
   methods: {
     setCanvas() {
-        const ctx = this.$refs.canvas.getContext('2d');
+        const ctx = this.$refs.canvasColor.getContext('2d');
         const gradient = ctx.createLinearGradient(
-            0, this.height / 2, this.$refs.canvas.width, this.height / 2
+            0, this.height / 2, this.$refs.canvasColor.width, this.height / 2
         );
         gradient.addColorStop(0, 'red');
         gradient.addColorStop(0.16666, 'orange');
@@ -91,7 +91,7 @@ export default {
         gradient.addColorStop(1, 'violet');
 
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+        ctx.fillRect(0, 0, this.$refs.canvasColor.width, this.$refs.canvasColor.height);
     },
     mouseDown(event) {
       const { x } = event;
@@ -111,7 +111,7 @@ export default {
       document.onmousemove = null;
     },
     setPointerOnMouse(x) {
-      const { left, width } = this.$refs.canvas.getBoundingClientRect();
+      const { left, width } = this.$refs.canvasColor.getBoundingClientRect();
       if (x > left + width) {
         x = left + width - 5;
       }
