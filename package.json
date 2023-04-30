@@ -5,6 +5,10 @@
     "name": "Eugene",
     "email": "eugeale@yandex.ru"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JerrySly/vue-gradient-component"
+  },
   "license": "MIT",
   "main": "dist/vue-gradient-component.umd.min.js",
   "module": "dist/vue-gradient-component.umd.min.js",
