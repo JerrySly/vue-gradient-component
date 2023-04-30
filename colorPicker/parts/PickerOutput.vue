@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import colorMixin from '../../../../colorPicker/colorMixin';
+import colorMixin from '../colorMixin';
 
 export default {
     mixins: [colorMixin],
