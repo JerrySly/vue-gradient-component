@@ -5,6 +5,7 @@
     "name": "Eugene",
     "email": "eugeale@yandex.ru"
   },
+  "license": "MIT",
   "main": "dist/vue-gradient-component.umd.min.js",
   "module": "dist/vue-gradient-component.umd.min.js",
   "private": false,
