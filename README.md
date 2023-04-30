@@ -1,19 +1,28 @@
 # vue-gradient-component
 
-## Project setup
+## Library setup
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+npm i vue-gradient-component
 ```
 
-### Compiles and minifies for production
+## Import in main
 ```
-npm run build
+import ColorPicker from 'vue-gradient-component';
+
+const app = createApp(App);
+app.use(ColorPicker);
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Using in components
+```
+<template>
+  <div>
+    <img
+      alt="Vue logo"
+      src="./assets/logo.png"
+    />
+    <color-picker></color-picker>
+  </div>
+</template>
+```

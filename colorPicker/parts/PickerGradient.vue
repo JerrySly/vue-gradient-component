@@ -4,7 +4,6 @@
     :style="{ width: width + 'px', height: height + 'px' }"
     @mousedown="mouseDown"
     @mouseup="mouseUp"
-    @click="createPoint"
     @keydown.delete.stop="deletePoint"
   >
     <canvas
@@ -12,14 +11,16 @@
       :width="width"
       :height="height"
       class="color-canvas"
+      @click="createPoint"
+      @mouseup="mouseUp"
     />
     <div
       v-for="(point, index) in points"
       :key="index"
       class="gradient-pointer"
       :style="pointStyle(point, selectPoint === point)"
-      @mousedown="selectionPoint(point)"
-      @click.stop
+      @mousedown="(event) =>{ mouseDown(event); selectionPoint(point);}"
+      @mouseup="mouseUp"
       @dblclick.stop="deletePoint(point)"
     />
   </div>
@@ -49,6 +50,10 @@ export default {
       type: String,
       default: 'white',
     },
+    color: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -72,14 +77,23 @@ export default {
       ],
     };
   },
+  watch: {
+    color() {
+      if(this.selectPoint) {
+        const point = this.points.filter(x => x.id === this.selectPoint.id)[0];
+        point.color = this.color;
+        this.setCanvasGradient();
+        this.$emit('update', this.points);
+      }
+    }
+  },
   mounted() {
     this.body = document.getElementById('picker-body');
-    document.body.addEventListener('mouseup', () => {
-      this.clicked = false;
-    });
     this.setCanvasGradient();
+    document.addEventListener('mouseup', () => {
+      this.clicked = false;
+    })
   },
-  computed: {},
   methods: {
     getLastId() {
       return this.points.map(x=> x.id).sort((a,b) => b - a)[0];
@@ -91,7 +105,7 @@ export default {
     },
     createPoint(event) {
       const { x } = event;
-      const { left, width } = this.$refs.canvasGradient.getBoundingClientRect();
+      const { left } = this.$refs.canvasGradient.getBoundingClientRect();
       const onePercent = this.width / 100;
       const currentPosition = (x - left) / onePercent;
       this.points.push({
@@ -101,6 +115,7 @@ export default {
       })
       this.selectionPoint(this.points[this.points.length-1]);
       this.setCanvasGradient();
+      this.$emit('update', this.points);
     },
     selectionPoint(point) {
       this.selectPoint = point;
@@ -133,10 +148,8 @@ export default {
       };
     },
     mouseDown(event) {
-      const { x } = event;
       this.clicked = true;
       document.body.onmousemove = this.mouseMove;
-      // this.setPointerOnMouse(x);
     },
     mouseMove(event) {
       if (this.clicked) {
@@ -161,11 +174,12 @@ export default {
           currentPosition = (x - left) / onePercent;
         }
       }
-      if (this.selectPoint) {
+      if (this.selectPoint && this.clicked) {
         this.points.filter(
-          (x) => x.color === this.selectPoint.color
+          (x) => x.id === this.selectPoint.id
         )[0].position = currentPosition;
         this.setCanvasGradient();
+        this.$emit('update', this.points);
       }
     },
   },

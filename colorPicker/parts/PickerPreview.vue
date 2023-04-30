@@ -1,5 +1,6 @@
 <template>
   <div
+    :key="updateKey"
     class="preview"
     :style="{
       width: width + 'px',
@@ -25,6 +26,16 @@ export default {
       default: 150,
     },
   },
+  data() {
+    return {
+      updateKey: 0
+    }
+  },
+  watch: {
+    background() {
+      this.updateKey += 1;
+    }
+  }
 };
 </script>
 

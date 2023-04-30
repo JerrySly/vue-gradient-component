@@ -4,16 +4,21 @@
       alt="Vue logo"
       src="./assets/logo.png"
     />
-    <color-picker />
+    <div style="display: flex; justify-content: center">
+      <ColorPicker @input="(value) => (log = value)" outputValueType="string/svg"/>
+    </div>
+    <div style=" height: 500px;">{{ log }}</div>
   </div>
 </template>
 
 <script>
-import ColorPicker from './components/ColorPicker.vue';
-
 export default {
-  components: { ColorPicker },
   name: 'App',
+  data() {
+    return {
+      log: null,
+    };
+  },
 };
 </script>
 

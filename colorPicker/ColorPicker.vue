@@ -1,5 +1,12 @@
 <template
   ><div class="color-picker">
+    <div v-if="mode === 'gradient'">
+      <picker-angle
+        @change="changeAngle"
+        :point-color="anglePointColor"
+        :circle-color="angleCircleColor"
+      />
+    </div>
     <picker-body
       class="color-picker__body"
       :color="shade.rgb"
@@ -10,10 +17,13 @@
       :point-color="pickerBodyPointColor"
     />
     <picker-gradient
+      v-if="mode === 'gradient'"
       :width="width"
       :height="optionBlockHeight"
       :point-size="pickerGradientPointSize"
       class="color-picker__gradient"
+      :color="normalColor"
+      @update="setGradientPoints"
     />
     <picker-color-panel
       @input="(data) => (shade = data)"
@@ -30,7 +40,7 @@
       :height="optionBlockHeight"
       :point-size="pickerOptionPointSize"
       :point-color="pickerOptionPointColor"
-      :color="previewBackground"
+      :color="normalColor"
     />
     <div class="preview-block">
       <picker-preview
@@ -39,6 +49,7 @@
         :height="previewHeight"
       />
       <picker-output
+        v-if="mode === 'normal'"
         :color="previewBackground"
         :outputType="outputTextType"
       />
@@ -47,13 +58,16 @@
 </template>
 
 <script>
+import colorMixin from './colorMixin';
 import PickerBody from './parts/PickerBody.vue';
 import PickerColorPanel from './parts/PickerColorPanel.vue';
 import PickerGradient from './parts/PickerGradient.vue';
 import PickerOpacity from './parts/PickerOpacity.vue';
 import PickerOutput from './parts/PickerOutput.vue';
 import PickerPreview from './parts/PickerPreview.vue';
+import PickerAngle from './parts/PickerAngle.vue';
 export default {
+  name: 'ColorPicker',
   components: {
     PickerBody,
     PickerOpacity,
@@ -61,7 +75,9 @@ export default {
     PickerColorPanel,
     PickerOutput,
     PickerGradient,
+    PickerAngle,
   },
+  mixins: [colorMixin],
   props: {
     width: {
       type: [String, Number],
@@ -103,6 +119,14 @@ export default {
       type: [String, Number],
       default: 50,
     },
+    anglePointColor: {
+      type: String,
+      default: 'orange'
+    },
+    angleCircleColor: {
+      type: String,
+      default: 'orange'
+    },
     outputTextType: {
       type: String,
       default: 'hex-alpha',
@@ -126,6 +150,13 @@ export default {
         return ['normal', 'gradient'].includes(value);
       },
     },
+    gradientType: {
+      type: String,
+      default: 'linear',
+      validator(value) {
+        return ['linear','radial'].includes(value)
+      }
+    }
   },
   data() {
     return {
@@ -138,14 +169,30 @@ export default {
       shade: {
         rgb: 'red',
       },
+      angle: 0,
+      points: null
     };
   },
   computed: {
     previewBackground() {
-      return `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.opacity})`;
+      if (this.mode === 'normal') return `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.opacity})`;
+      if (this.mode === 'gradient' && this.points) {
+        return this.pointsToGradient(this.points, this.gradientType, this.angle);
+      }
     },
+    normalColor() {
+      return `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.opacity})`;
+    }
   },
   methods: {
+    setGradientPoints(points) {
+      this.points = points;
+      this.emitValue();
+    },
+    changeAngle(value) {
+      this.angle = value;
+      this.emitValue();
+    },
     opacityInput(data) {
       this.opacity = data;
       this.emitValue();
@@ -163,8 +210,16 @@ export default {
       if (this.outputValueType === 'string/rgba')
         this.$emit('input', this.previewBackground);
       if (this.outputValueType === 'object') {
-        this.color.a = this.opacity;
-        this.$emit('input', this.color);
+        if(this.mode === 'normal') { 
+          this.color.a = this.opacity;
+          this.$emit('input', this.color);
+        }
+        if(this.mode === 'gradient') {
+          this.$emit('input', {points: this.points, angle: this.angle});
+        }
+      }
+      if (this.outputValueType === 'string/svg') {
+        if (this.mode === 'gradient') this.$emit('input', this.pointsToSvgDefs(this.points, this.gradientType, this.angle))
       }
       return this.previewBackground;
     },

@@ -1,0 +1,9 @@
+# Игнорировать каталог
+src/
+colorPicker/
+public/
+
+# Игнорировать указанный файл
+vue.config.js
+babel.config.js
+*.map

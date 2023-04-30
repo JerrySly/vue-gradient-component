@@ -1,10 +1,19 @@
 {
   "name": "vue-gradient-component",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.45",
+  "author": {
+    "name": "Eugene",
+    "email": "eugeale@yandex.ru"
+  },
+  "main": "dist/vue-gradient-component.umd.min.js",
+  "module": "dist/vue-gradient-component.umd.min.js",
+  "private": false,
+  "description": "Color picker with gradient options",
+  "keywords": ["color", "picker", "color-picker", "gradient", "svg", "svg-gradient"],
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "lib": "vue-cli-service build --target lib --name vue-gradient-component --dest dist colorPicker/index.js"
   },
   "dependencies": {
     "vue": "^3.2.13"
